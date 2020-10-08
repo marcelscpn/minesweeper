@@ -34,6 +34,21 @@ board* create_new_board(int h, int w, int percentage){
 	return ret;
 }
 
+int flag(board* layover, int x, int y){
+	if(*(*(layover->cell + y) + x) >= 0){
+		return 1;
+	}
+	else if(*(*(layover->cell + y) + x) == -1){
+		*(*(layover->cell + y) + x) = -2;
+		return 0;
+	}
+	else if(*(*(layover->cell + y) + x) == -2){
+		*(*(layover->cell + y) + x) == -1;
+		return 0;
+	}
+}
+
+
 int main(int argc, char* argv[]){
 	board* B = create_new_board(10, 20, 10);
 	int i, j;
@@ -46,9 +61,4 @@ int main(int argc, char* argv[]){
 	return 0;
 }
 
-/*
-int flag(board* layover, int x, int y){
-	
-}
-*/
 
