@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct board{
 	int height;
@@ -9,23 +10,56 @@ struct board{
 
 typedef struct board board;
 
-board* create_new_board(int h, int w, int percentage){
-	board* ret = (board*)malloc(sizeof(board));
-	ret->height = h;
-	ret->width = w;
-	ret->cell = (int**)malloc(ret->height * sizeof(int *));
+void print_layover(board* layover){
 	int i, j;
-	for(i = 0; i < ret->height; i++){
-		*(ret->cell + i) = malloc(ret->width * sizeof(int));
-		for(j = 0; j < ret->width; j++){
-			*(*(ret->cell + i) + j) = 0;
+	for(i = 0; i < layover->height; i++){
+		for(j = 0; j < layover->width; j++){
+			switch(*(*(layover->cell + i) + j)){
+				case -4: printf("f ");
+					 break;
+				case -3: printf("# ");
+					 break;
+				case -2: printf("x ");
+					 break;
+				case -1: printf(". ");
+					 break;
+				case 0: printf("  ");
+					break;
+				default: printf("%d ", *(*(layover->cell + i) + j));
+					 break;
+			}
 		}
+		printf("\n");
 	}
-	int num = h * w * percentage / 100;
+}
+
+board* create_layover(int h, int w, int init){
+        board* ret = (board*)malloc(sizeof(board));
+        ret->height = h;
+        ret->width = w;
+        ret->cell = (int**)malloc(ret->height * sizeof(int *));
+        int i, j;
+        for(i = 0; i < ret->height; i++){
+                *(ret->cell + i) = malloc(ret->width * sizeof(int));
+                for(j = 0; j < ret->width; j++){
+                        *(*(ret->cell + i) + j) = init;
+                }
+        }
+	return ret;
+}
+
+board* create_new_board(int h, int w, int num){
+	board* ret = create_layover(h, w, 0);
+	if(num > h * w){
+		num = h * w;
+	}
+	//int num = h * w * percentage / 100;
 	int x, y;
+	srand((unsigned)time(NULL));
 	while(num){
 		x = rand() % ret->width; 
 		y = rand() % ret->height;
+		if(x == 0 && y == 0) continue;
 		if(!*(*(ret->cell + y) + x)){
 			*(*(ret->cell + y) + x) = 1;
 			num--; 
@@ -34,8 +68,30 @@ board* create_new_board(int h, int w, int percentage){
 	return ret;
 }
 
+int neighboring_mines(board* mines, int x, int y){
+	int sum = 0;
+	if(x - 1 >= 0)
+		sum += *(*(mines->cell + y) + x - 1);
+	if(x - 1 >= 0 && y + 1 < mines->width)
+		sum += *(*(mines->cell + y + 1) + x - 1);
+	if(y + 1 < mines->width)
+		sum += *(*(mines->cell + y + 1) + x);
+	if(x + 1 < mines->height && y + 1 < mines->width)
+		sum += *(*(mines->cell + y + 1) + x + 1);
+	if(x + 1 < mines->height)
+		sum += *(*(mines->cell + y) + x + 1);
+	if(x + 1 < mines->height && y - 1 >= 0)
+		sum += *(*(mines->cell + y - 1) + x + 1);
+	if(y - 1 >= 0)
+		sum += *(*(mines->cell + y - 1) + x);
+	if(x - 1 >= 0 && y - 1 >= 0)
+		sum += *(*(mines->cell + y - 1) + x - 1);
+	return sum;
+}
+
+
 int flag(board* layover, int x, int y){
-	if(*(*(layover->cell + y) + x) >= 0){
+	if(*(*(layover->cell + y) + x) != -1 && *(*(layover->cell + y) + x) != -2){
 		return 1;
 	}
 	else if(*(*(layover->cell + y) + x) == -1){
@@ -43,20 +99,126 @@ int flag(board* layover, int x, int y){
 		return 0;
 	}
 	else if(*(*(layover->cell + y) + x) == -2){
-		*(*(layover->cell + y) + x) == -1;
+		*(*(layover->cell + y) + x) = -1;
 		return 0;
+	}
+}
+
+int uncover(board* layover, board *mines, int x, int y, int rec){
+	int i, j;
+	if(*(*(layover->cell + y) + x) != -1){ 
+		return 1;
+	}
+	if(*(*(mines->cell + y) + x) == 1 && !rec){
+		//printf("clicked on mine\n");
+		for(i = 0; i < layover->height; i++){
+			for(j = 0; j < layover->width; j++){
+				if(*(*(mines->cell + i) + j) == 1 && *(*(layover->cell + i) + j) == -1){
+					*(*(layover->cell + i) + j) = -3;
+					//printf("Mine exploded at %d %d\n", i, j);
+				}
+				else if(*(*(mines->cell + i) + j) == 0 && *(*(layover->cell + i) + j) == -2){
+					*(*(layover->cell + i) + j) = -4;
+				}
+			}
+		}
+		return -1;
+	}
+	int n;
+	if(*(*(mines->cell + y) + x) == 0){	
+		n = neighboring_mines(mines, x, y);
+		*(*(layover->cell + y) + x) = n;
+		if(n == 0){
+			if(x - 1 >= 0) 
+				uncover(layover, mines, x - 1, y, 1);
+			if(x - 1 >= 0 && y + 1 < layover->width)
+				uncover(layover, mines, x - 1, y + 1, 1);
+			if(y + 1 < layover->width)
+				uncover(layover, mines, x, y + 1, 1);
+			if(x + 1 < layover->height && y + 1 < layover->width)
+				uncover(layover, mines, x + 1, y + 1, 1);
+			if(x + 1 < layover->height)
+				uncover(layover, mines, x + 1, y, 1);
+			if(x + 1 < layover->height && y - 1 >= 0)
+				uncover(layover, mines, x + 1, y - 1, 1);
+			if(y - 1 >= 0)
+				uncover(layover, mines, x, y - 1, 1);
+			if(x - 1 >= 0 && y - 1 >= 0)
+				uncover(layover, mines, x - 1, y - 1, 1);
+		}		
+	return 0;
+	}
+}
+
+int strategy(board* layover, board* mines, char *output, int step){
+	output = (char*)malloc(10*sizeof(char));
+	if(step == 0){
+		uncover(layover, mines, 0, 0, 0);
+		output = "u 0 0";
+		//printf("OUTPUT: %s", output);
+		return 0;
+	}
+	else{
+		return 1;
 	}
 }
 
 
 int main(int argc, char* argv[]){
-	board* B = create_new_board(10, 20, 10);
-	int i, j;
-	for(i = 0; i < 10; i++){
-		for(j = 0; j < 20; j++){
-			printf("%d ", *(*(B->cell + i) + j));
+	if(argc != 5){
+		printf("Please specify board size and number of mines\n");
+		return 1;
+	}	
+	int mode, h, w, num;
+	sscanf(argv[1], "%d", &mode);
+	sscanf(argv[2], "%d", &h);
+	sscanf(argv[3], "%d", &w);
+	sscanf(argv[4], "%d", &num);
+	board* mines = create_new_board(h, w, num);
+	board* layover = create_layover(h, w, -1);
+	char c;
+	int x, y, steps = 0;
+	print_layover(mines);
+	if(!mode){
+		while(1){
+			print_layover(layover);
+			printf("%d> ", steps);
+			scanf(" %c %d %d", &c, &x, &y);
+			//printf("INPUT SCANNED: %c %d %d\n", c, x, y);
+			if(x < 0 || x >= w || y < 0 || y >= h){
+				printf("Coordinates not in range\n");
+				steps++;
+				continue;	
+			}
+			if(c == 'f'){
+				if(flag(layover, x, y)){
+					printf("Cannot flag cells already uncovered\n");
+				}
+			}
+			else if(c == 'u'){
+				switch(uncover(layover, mines, x, y, 0)){
+					case 1: printf("Cannot uncover cells already uncovered\n");
+						break;
+					case -1: printf("You clicked on a mine! Idiot...\n");
+						 print_layover(layover);
+						 return 0;
+				}
+			}
+			steps++;
 		}
-		printf("\n");
+	}
+	else{
+		char *output;
+		while(1){
+			print_layover(layover);
+			if(!strategy(layover, mines, output, steps))
+				printf("%d> %s", steps, output);
+			else{
+				printf("Computer has given up\n");
+				return 0;
+			}
+			steps++;	
+		}
 	}
 	return 0;
 }
