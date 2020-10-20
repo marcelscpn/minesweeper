@@ -8,7 +8,7 @@ ODIR=./obj
 
 #LIBS=-lm
 
-_DEPS = board.h strategy.h
+_DEPS = board.h strategy.h minunit.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ = board.o strategy.o main.o
