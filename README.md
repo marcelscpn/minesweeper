@@ -8,3 +8,5 @@ See http://www.jera.com/techinfo/jtns/jtn002.html
 # TODO
 - Use getopt() API for command line arguments
 - Write strategies
+- Write unit tests7
+- Add unit test compilation to makefile
