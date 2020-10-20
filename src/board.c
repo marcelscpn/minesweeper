@@ -69,24 +69,77 @@ board* create_new_board(int h, int w, int num){
 }
 
 int count_neighboring_indices(board* layover, int x, int y, int ind){
-        int sum = 0;
-        if(x - 1 >= 0 && *(*(layover->cell + y) + x -1) == ind)
-                sum += *(*(layover->cell + y) + x - 1);
-        if(x - 1 >= 0 && y + 1 < layover->width && *(*(layover->cell + y + 1) + x -1) == ind)
-                sum += *(*(layover->cell + y + 1) + x - 1);
-        if(y + 1 < layover->width && *(*(layover->cell + y + 1) + x) == ind)
-                sum += *(*(layover->cell + y + 1) + x);
-        if(x + 1 < layover->height && y + 1 < layover->width && *(*(layover->cell + y + 1) + x + 1) == ind)
-                sum += *(*(layover->cell + y + 1) + x + 1);
-        if(x + 1 < layover->height && *(*(layover->cell + y) + x + 1) == ind)
-                sum += *(*(layover->cell + y) + x + 1);
-        if(x + 1 < layover->height && y - 1 >= 0 && *(*(layover->cell + y - 1) + x) == ind)
-                sum += *(*(layover->cell + y - 1) + x + 1);
-        if(y - 1 >= 0 && *(*(layover->cell + y - 1) + x) == ind)
-                sum += *(*(layover->cell + y - 1) + x);
-        if(x - 1 >= 0 && y - 1 >= 0 && *(*(layover->cell + y - 1) + x - 1) == ind)
-                sum += *(*(layover->cell + y - 1) + x - 1);
-        return sum;
+		int i, sum = 0;
+		int* neighb = neighborhood(layover, x, y);
+		for(i = 0; i < *neighb; i++){
+			sum += *(*(layover->cell + *(neighb + 2*i + 1)) + *(neighb + 2*i + 2));
+		}
+		free(neighb);
+		return sum;
+        // if(x - 1 >= 0 && *(*(layover->cell + y) + x -1) == ind)
+        //         sum += *(*(layover->cell + y) + x - 1);
+        // if(x - 1 >= 0 && y + 1 < layover->width && *(*(layover->cell + y + 1) + x -1) == ind)
+        //         sum += *(*(layover->cell + y + 1) + x - 1);
+        // if(y + 1 < layover->width && *(*(layover->cell + y + 1) + x) == ind)
+        //         sum += *(*(layover->cell + y + 1) + x);
+        // if(x + 1 < layover->height && y + 1 < layover->width && *(*(layover->cell + y + 1) + x + 1) == ind)
+        //         sum += *(*(layover->cell + y + 1) + x + 1);
+        // if(x + 1 < layover->height && *(*(layover->cell + y) + x + 1) == ind)
+        //         sum += *(*(layover->cell + y) + x + 1);
+        // if(x + 1 < layover->height && y - 1 >= 0 && *(*(layover->cell + y - 1) + x) == ind)
+        //         sum += *(*(layover->cell + y - 1) + x + 1);
+        // if(y - 1 >= 0 && *(*(layover->cell + y - 1) + x) == ind)
+        //         sum += *(*(layover->cell + y - 1) + x);
+        // if(x - 1 >= 0 && y - 1 >= 0 && *(*(layover->cell + y - 1) + x - 1) == ind)
+        //         sum += *(*(layover->cell + y - 1) + x - 1);
+       // return sum;
+}
+
+int* neighborhood(board* mines, int x, int y){
+	int* ret = (int*)malloc(17 * sizeof(int));
+	int count = 0;
+	if(x - 1 >= 0){
+		*(ret + 1 + 2*count) = y;
+		*(ret + 2 + 2*count) = x - 1;
+		count++;
+	}
+	if(x - 1 >= 0 && y + 1 < mines->width){
+		*(ret + 1 + 2*count) = y + 1;
+		*(ret + 2 + 2*count) = x - 1;
+		count++;
+	}
+	if(y + 1 < mines->width){
+		*(ret + 1 + 2*count) = y + 1;
+		*(ret + 2 + 2*count) = x;
+		count++;
+	}
+	if(x + 1 < mines->height && y + 1 < mines->width){
+		*(ret + 1 + 2*count) = y + 1;
+		*(ret + 2 + 2*count) = x + 1;
+		count++;
+	}
+	if(x + 1 < mines->height){
+		*(ret + 1 + 2*count) = y;
+		*(ret + 2 + 2*count) = x + 1;
+		count++;
+	}
+	if(x + 1 < mines->height && y - 1 >= 0){
+		*(ret + 1 + 2*count) = y - 1;
+		*(ret + 2 + 2*count) = x + 1;
+		count++;
+	}
+	if(y - 1 >= 0){
+		*(ret + 1 + 2*count) = y - 1;
+		*(ret + 2 + 2*count) = x;
+		count++;
+	}
+	if(x - 1 >= 0 && y - 1 >= 0){
+		*(ret + 1 + 2*count) = y - 1;
+		*(ret + 2 + 2*count) = x - 1;
+		count++;
+	}
+	*ret = count; 
+	return ret;
 }
 
 /*int neighboring_mines(board* mines, int x, int y){
@@ -150,22 +203,27 @@ int uncover(board* layover, board *mines, int x, int y, int rec){
 		n = count_neighboring_indices(mines, x, y, 1);
 		*(*(layover->cell + y) + x) = n;
 		if(n == 0){
-			if(x - 1 >= 0) 
-				uncover(layover, mines, x - 1, y, 1);
-			if(x - 1 >= 0 && y + 1 < layover->width)
-				uncover(layover, mines, x - 1, y + 1, 1);
-			if(y + 1 < layover->width)
-				uncover(layover, mines, x, y + 1, 1);
-			if(x + 1 < layover->height && y + 1 < layover->width)
-				uncover(layover, mines, x + 1, y + 1, 1);
-			if(x + 1 < layover->height)
-				uncover(layover, mines, x + 1, y, 1);
-			if(x + 1 < layover->height && y - 1 >= 0)
-				uncover(layover, mines, x + 1, y - 1, 1);
-			if(y - 1 >= 0)
-				uncover(layover, mines, x, y - 1, 1);
-			if(x - 1 >= 0 && y - 1 >= 0)
-				uncover(layover, mines, x - 1, y - 1, 1);
+			int *neighb = neighborhood(layover, x, y);
+			for(int i = 0; i < *neighb; i++){
+				uncover(layover, mines, *(neighb + 2*i + 2), *(neighb + 2*i + 1), 1);
+			}
+			// if(x - 1 >= 0) 
+			// 	uncover(layover, mines, x - 1, y, 1);
+			// if(x - 1 >= 0 && y + 1 < layover->width)
+			// 	uncover(layover, mines, x - 1, y + 1, 1);
+			// if(y + 1 < layover->width)
+			// 	uncover(layover, mines, x, y + 1, 1);
+			// if(x + 1 < layover->height && y + 1 < layover->width)
+			// 	uncover(layover, mines, x + 1, y + 1, 1);
+			// if(x + 1 < layover->height)
+			// 	uncover(layover, mines, x + 1, y, 1);
+			// if(x + 1 < layover->height && y - 1 >= 0)
+			// 	uncover(layover, mines, x + 1, y - 1, 1);
+			// if(y - 1 >= 0)
+			// 	uncover(layover, mines, x, y - 1, 1);
+			// if(x - 1 >= 0 && y - 1 >= 0)
+			// 	uncover(layover, mines, x - 1, y - 1, 1);
+			free(neighb);
 		}		
 	return 0;
 	}
