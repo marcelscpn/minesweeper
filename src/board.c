@@ -53,7 +53,6 @@ board* create_new_board(int h, int w, int num){
 	if(num > h * w){
 		num = h * w;
 	}
-	//int num = h * w * percentage / 100;
 	int x, y;
 	srand((unsigned)time(NULL));
 	while(num){
@@ -76,23 +75,6 @@ int count_neighboring_indices(board* layover, int x, int y, int ind){
 		}
 		free(neighb);
 		return sum;
-        // if(x - 1 >= 0 && *(*(layover->cell + y) + x -1) == ind)
-        //         sum += *(*(layover->cell + y) + x - 1);
-        // if(x - 1 >= 0 && y + 1 < layover->width && *(*(layover->cell + y + 1) + x -1) == ind)
-        //         sum += *(*(layover->cell + y + 1) + x - 1);
-        // if(y + 1 < layover->width && *(*(layover->cell + y + 1) + x) == ind)
-        //         sum += *(*(layover->cell + y + 1) + x);
-        // if(x + 1 < layover->height && y + 1 < layover->width && *(*(layover->cell + y + 1) + x + 1) == ind)
-        //         sum += *(*(layover->cell + y + 1) + x + 1);
-        // if(x + 1 < layover->height && *(*(layover->cell + y) + x + 1) == ind)
-        //         sum += *(*(layover->cell + y) + x + 1);
-        // if(x + 1 < layover->height && y - 1 >= 0 && *(*(layover->cell + y - 1) + x) == ind)
-        //         sum += *(*(layover->cell + y - 1) + x + 1);
-        // if(y - 1 >= 0 && *(*(layover->cell + y - 1) + x) == ind)
-        //         sum += *(*(layover->cell + y - 1) + x);
-        // if(x - 1 >= 0 && y - 1 >= 0 && *(*(layover->cell + y - 1) + x - 1) == ind)
-        //         sum += *(*(layover->cell + y - 1) + x - 1);
-       // return sum;
 }
 
 int* neighborhood(board* mines, int x, int y){
@@ -142,28 +124,6 @@ int* neighborhood(board* mines, int x, int y){
 	return ret;
 }
 
-/*int neighboring_mines(board* mines, int x, int y){
-	int sum = 0;
-	if(x - 1 >= 0)
-		sum += *(*(mines->cell + y) + x - 1);
-	if(x - 1 >= 0 && y + 1 < mines->width)
-		sum += *(*(mines->cell + y + 1) + x - 1);
-	if(y + 1 < mines->width)
-		sum += *(*(mines->cell + y + 1) + x);
-	if(x + 1 < mines->height && y + 1 < mines->width)
-		sum += *(*(mines->cell + y + 1) + x + 1);
-	if(x + 1 < mines->height)
-		sum += *(*(mines->cell + y) + x + 1);
-	if(x + 1 < mines->height && y - 1 >= 0)
-		sum += *(*(mines->cell + y - 1) + x + 1);
-	if(y - 1 >= 0)
-		sum += *(*(mines->cell + y - 1) + x);
-	if(x - 1 >= 0 && y - 1 >= 0)
-		sum += *(*(mines->cell + y - 1) + x - 1);
-	return sum;
-}*/
-
-
 int flag(board* layover, int x, int y){
 	if(*(*(layover->cell + y) + x) != -1 && *(*(layover->cell + y) + x) != -2){
 		return 1;
@@ -184,12 +144,10 @@ int uncover(board* layover, board *mines, int x, int y, int rec){
 		return 1;
 	}
 	if(*(*(mines->cell + y) + x) == 1 && !rec){
-		//printf("clicked on mine\n");
 		for(i = 0; i < layover->height; i++){
 			for(j = 0; j < layover->width; j++){
 				if(*(*(mines->cell + i) + j) == 1 && *(*(layover->cell + i) + j) == -1){
 					*(*(layover->cell + i) + j) = -3;
-					//printf("Mine exploded at %d %d\n", i, j);
 				}
 				else if(*(*(mines->cell + i) + j) == 0 && *(*(layover->cell + i) + j) == -2){
 					*(*(layover->cell + i) + j) = -4;
@@ -207,22 +165,6 @@ int uncover(board* layover, board *mines, int x, int y, int rec){
 			for(int i = 0; i < *neighb; i++){
 				uncover(layover, mines, *(neighb + 2*i + 2), *(neighb + 2*i + 1), 1);
 			}
-			// if(x - 1 >= 0) 
-			// 	uncover(layover, mines, x - 1, y, 1);
-			// if(x - 1 >= 0 && y + 1 < layover->width)
-			// 	uncover(layover, mines, x - 1, y + 1, 1);
-			// if(y + 1 < layover->width)
-			// 	uncover(layover, mines, x, y + 1, 1);
-			// if(x + 1 < layover->height && y + 1 < layover->width)
-			// 	uncover(layover, mines, x + 1, y + 1, 1);
-			// if(x + 1 < layover->height)
-			// 	uncover(layover, mines, x + 1, y, 1);
-			// if(x + 1 < layover->height && y - 1 >= 0)
-			// 	uncover(layover, mines, x + 1, y - 1, 1);
-			// if(y - 1 >= 0)
-			// 	uncover(layover, mines, x, y - 1, 1);
-			// if(x - 1 >= 0 && y - 1 >= 0)
-			// 	uncover(layover, mines, x - 1, y - 1, 1);
 			free(neighb);
 		}		
 	return 0;
