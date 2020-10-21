@@ -67,16 +67,6 @@ board* create_new_board(int h, int w, int num){
 	return ret;
 }
 
-int count_neighboring_indices(board* layover, int x, int y, int ind){
-		int i, sum = 0;
-		int* neighb = neighborhood(layover, x, y);
-		for(i = 0; i < *neighb; i++){
-			sum += *(*(layover->cell + *(neighb + 2*i + 1)) + *(neighb + 2*i + 2));
-		}
-		free(neighb);
-		return sum;
-}
-
 int* neighborhood(board* mines, int x, int y){
 	int* ret = (int*)malloc(17 * sizeof(int));
 	int count = 0;
@@ -122,6 +112,16 @@ int* neighborhood(board* mines, int x, int y){
 	}
 	*ret = count; 
 	return ret;
+}
+
+int count_neighboring_indices(board* layover, int x, int y, int ind){
+		int i, sum = 0;
+		int* neighb = neighborhood(layover, x, y);
+		for(i = 0; i < *neighb; i++){
+			sum += *(*(layover->cell + *(neighb + 2*i + 1)) + *(neighb + 2*i + 2));
+		}
+		free(neighb);
+		return sum;
 }
 
 int flag(board* layover, int x, int y){

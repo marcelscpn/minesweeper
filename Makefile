@@ -19,10 +19,13 @@ $(ODIR)/main.o: $(SRCDIR)/main.c
 all: $(OBJ) $(ODIR)/main.o 
 	$(CC) -o $(EXECDIR)/minesweeper $^ $(CFLAGS)
 
-$(ODIR)/test.o: $(TESTDIR)/test.c
+_OBJT = test_strategy.o test_board.o test_main.o minunittest.o
+OBJT = $(patsubst %,$(ODIR)/test/%,$(_OBJT))
+
+$(ODIR)/test/%.o: $(TESTDIR)/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-test: $(OBJ) $(ODIR)/test.o
+test: $(OBJ) $(OBJT)
 	$(CC) -o $(EXECDIR)/unit_test $^ $(CFLAGS)
 
 .PHONY: clean
