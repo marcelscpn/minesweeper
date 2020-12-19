@@ -6,5 +6,5 @@ The project is unit tested using minunit.h
 See https://github.com/siu/minunit 
 
 # TODO
-- Write strategies
+- Debug and test simple search strategy  
 - Write unit tests
