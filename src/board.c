@@ -118,10 +118,50 @@ int count_neighboring_indices(board* layover, int x, int y, int ind){
 		int i, sum = 0;
 		int* neighb = neighborhood(layover, x, y);
 		for(i = 0; i < *neighb; i++){
-			sum += *(*(layover->cell + *(neighb + 2*i + 1)) + *(neighb + 2*i + 2));
+			if( *(*(layover->cell + *(neighb + 2*i + 1)) + *(neighb + 2*i + 2)) == ind){
+                sum++;
+            }
 		}
 		free(neighb);
 		return sum;
+}
+
+int* index_neighborhood(board* layover, int x, int y, int ind){
+    int* neighb = neighborhood(layover, x, y);
+    int* ret = (int*)malloc((*neighb) * sizeof(int));
+    int count = 0;
+    for(int i = 0; i < *neighb; i++){
+        if( *(*(layover->cell + *(neighb + 2*i + 1)) + *(neighb + 2*i + 2)) == ind){
+            *(ret + 1 + 2*count) = *(neighb + 2*i + 1);
+            *(ret + 2 + 2*count) = *(neighb + 2*i + 2);
+            count++; 
+        }
+    }
+    *ret = count; 
+    free(neighb);
+    return ret;
+}
+
+int* remove_neighborhood(int* A, int* B){
+    int* ret = (int*)malloc((*A) * sizeof(int));
+    int count = 0;
+    int flag = 0;
+    for(int i = 0; i < *A; i++){
+        for(int j = 0; j < *B; j++){
+            if(*(A + 1 + 2*i) == *(B + 1 + 2*j) && *(A + 2 + 2*i) == *(B + 2 + 2*j)){
+                flag = 1;
+                break;
+            }
+        }
+        if(!flag){
+            *(ret + 1 + 2*count) = *(A + 1 + 2*i);
+            *(ret + 2 + 2*count) = *(A + 2 + 2*i);
+            count++; 
+        }
+        flag = 0;
+    }
+    *ret = count;
+    return ret;
 }
 
 int flag(board* layover, int x, int y){
@@ -136,6 +176,7 @@ int flag(board* layover, int x, int y){
 		*(*(layover->cell + y) + x) = -1;
 		return 0;
 	}
+    return 0;
 }
 
 int uncover(board* layover, board *mines, int x, int y, int rec){
@@ -167,8 +208,9 @@ int uncover(board* layover, board *mines, int x, int y, int rec){
 			}
 			free(neighb);
 		}		
-	return 0;
+        return 0;
 	}
+    return 0;
 }
 
 int check_covered(board* layover){
