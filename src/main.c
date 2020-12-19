@@ -1,5 +1,6 @@
 #include "board.h"
 #include "strategy.h"
+#include "command.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,8 +32,8 @@ int main(int argc, char* argv[]){
             scanf(" %c %d %d", &cmd->c, &cmd->y, &cmd->x);
         }
         else{
-            cmd = s_first_click(layover, steps);
-            //cmd = strategy(layover, steps);
+            //cmd = s_first_click(layover, steps);
+            cmd = strategy(layover, steps);
             print_command(cmd);
         }
         switch(parse_command(layover, mines, cmd)){
