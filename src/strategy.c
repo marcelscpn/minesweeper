@@ -1,56 +1,56 @@
 #include "strategy.h"
 #include "board.h"
+#include "command.h"
 
 #include <time.h>
 #include <stdlib.h> 
 #include <stdio.h> 
 
-void print_command(command *inp){
-    printf("%c %d %d\n", inp->c, inp->x, inp->y);
-}
-
-int parse_command(board* layover, board* mines, command* cmd){
-    int ret = 0;
-    if(cmd->give_up){
-        ret = 3;
-    }
-    if(cmd->x < 0 || cmd->x >= layover->width || cmd->y < 0 || cmd->y >= layover->height){
-        ret = -3;
-    }
-    switch(cmd->c){
-        case 'u':
-            switch(uncover(layover, mines, cmd->x, cmd->y, 0)){
-                case 1: ret = -1; 
-                    break;
-                case -1: ret = 1;
-                    break;
-            }
-            break;
-        case 'f': 
-            if(flag(layover, cmd->x, cmd->y)){
-                ret = -2; 
-            }
-            break;
-    }
-    free(cmd);
-    return ret;
-}
-
-
 strategy_ptr select_strategy(int mode){
     switch(mode){
         case 1:
             return s_first_click;
+        case 2:
+            return s_simple_search;
     }
 }
 
 command* s_first_click(board* layover, int steps){
-    printf("strategy running...\n");
-    command* cmd = (command*)malloc(sizeof(command));
-	cmd->c = 'u';
-    cmd->x = 0;
-    cmd->y = 0;
-    cmd->give_up = 1;
-    return cmd;
+    if(steps == 0){
+        return uncover_command(0, 0);
+    }
+    else{
+        return give_up_command();
+    }
 }
 
+command* s_simple_search(board* layover, int steps){
+    if(steps == 0){
+        return uncover_command(0, 0);
+    }
+    int n_mines, n_flags;
+    int* n_empty_fields;
+    command* cmd;
+    for(int i = 0; i < layover->height; i++){
+        for(int j = 0; j < layover->width; j++){
+            n_mines = *(*(layover->cell + i) + j);
+            if(n_mines > 0){
+                printf("%d,%d, %d\n", i, j, n_mines);
+                n_empty_fields = index_neighborhood(layover, i, j, -1);
+                n_flags = count_neighboring_indices(layover, i, j, -2);
+                if(n_mines - n_flags == *n_empty_fields){
+                    int y = *(n_empty_fields + 1);
+                    int x = *(n_empty_fields + 2);
+                    return flag_command(x, y);
+                }
+                if(n_mines - n_flags == 0 && *n_empty_fields > 0){
+                     int y = *(n_empty_fields + 1);
+                     int x = *(n_empty_fields + 2);
+                     return uncover_command(x, y);
+
+                }
+            }
+        }
+    }
+    return give_up_command();
+}
