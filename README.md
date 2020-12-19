@@ -3,10 +3,8 @@ Minesweeper Bot
 
 # Unit Testing
 The project is unit tested using minunit.h 
-See http://www.jera.com/techinfo/jtns/jtn002.html
+See https://github.com/siu/minunit 
 
 # TODO
-- Use getopt() API for command line arguments
 - Write strategies
-- Write unit tests7
-- Add unit test compilation to makefile
+- Write unit tests
