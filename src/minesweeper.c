@@ -1,3 +1,9 @@
+/*
+Original source code; 
+Now split up among the other source files;
+Remains for reference (for now) 
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
