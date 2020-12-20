@@ -65,6 +65,7 @@ int main(int argc, char* argv[]){
         steps++;
     }
     RET:
+    printf("It took: %d steps\n", steps);
     free_board(mines);
     free_board(layover);
 	return 0;
