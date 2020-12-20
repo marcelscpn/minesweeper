@@ -14,6 +14,7 @@ board* create_layover(int h, int w, int init);
 board* create_new_board(int h, int w, int num);
 int free_board(board* b);
 int* neighborhood(board* layover, int x, int y);
+void print_neighborhood(int* N);
 int count_neighboring_indices(board* layover, int x, int y, int ind);
 int* index_neighborhood(board* layover, int x, int y, int ind);
 int* remove_neighborhood(int* A, int* B);

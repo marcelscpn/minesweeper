@@ -123,6 +123,12 @@ int* neighborhood(board* mines, int x, int y){
 	return ret;
 }
 
+void print_neighborhood(int* N){
+    for(int i = 0; i < *N; i++){
+        printf("(%d; %d)\n", *(N + 1 + 2*i), *(N + 2 + 2*i));
+    }
+}
+
 int count_neighboring_indices(board* layover, int x, int y, int ind){
 		int i, sum = 0;
 		int* neighb = neighborhood(layover, x, y);
