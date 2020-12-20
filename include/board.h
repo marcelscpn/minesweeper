@@ -12,6 +12,7 @@ typedef struct board board;
 void print_layover(board* layover);
 board* create_layover(int h, int w, int init);
 board* create_new_board(int h, int w, int num);
+int free_board(board* b);
 int* neighborhood(board* layover, int x, int y);
 int count_neighboring_indices(board* layover, int x, int y, int ind);
 int* index_neighborhood(board* layover, int x, int y, int ind);

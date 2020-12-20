@@ -67,6 +67,15 @@ board* create_new_board(int h, int w, int num){
 	return ret;
 }
 
+int free_board(board* b){
+    for(int i = 0; i < b->height; i++){
+        free(*(b->cell + i));
+    }
+    free(b->cell);
+    free(b);
+    return 0;
+}
+
 int* neighborhood(board* mines, int x, int y){
 	int* ret = (int*)malloc(17 * sizeof(int));
 	int count = 0;
@@ -75,27 +84,27 @@ int* neighborhood(board* mines, int x, int y){
 		*(ret + 2 + 2*count) = x - 1;
 		count++;
 	}
-	if(x - 1 >= 0 && y + 1 < mines->width){
+	if(x - 1 >= 0 && y + 1 < mines->height){
 		*(ret + 1 + 2*count) = y + 1;
 		*(ret + 2 + 2*count) = x - 1;
 		count++;
 	}
-	if(y + 1 < mines->width){
+	if(y + 1 < mines->height){
 		*(ret + 1 + 2*count) = y + 1;
 		*(ret + 2 + 2*count) = x;
 		count++;
 	}
-	if(x + 1 < mines->height && y + 1 < mines->width){
+	if(x + 1 < mines->width && y + 1 < mines->height){
 		*(ret + 1 + 2*count) = y + 1;
 		*(ret + 2 + 2*count) = x + 1;
 		count++;
 	}
-	if(x + 1 < mines->height){
+	if(x + 1 < mines->width){
 		*(ret + 1 + 2*count) = y;
 		*(ret + 2 + 2*count) = x + 1;
 		count++;
 	}
-	if(x + 1 < mines->height && y - 1 >= 0){
+	if(x + 1 < mines->width && y - 1 >= 0){
 		*(ret + 1 + 2*count) = y - 1;
 		*(ret + 2 + 2*count) = x + 1;
 		count++;
@@ -128,7 +137,7 @@ int count_neighboring_indices(board* layover, int x, int y, int ind){
 
 int* index_neighborhood(board* layover, int x, int y, int ind){
     int* neighb = neighborhood(layover, x, y);
-    int* ret = (int*)malloc((*neighb) * sizeof(int));
+    int* ret = (int*)malloc( ((*neighb)*2 + 1) * sizeof(int));
     int count = 0;
     for(int i = 0; i < *neighb; i++){
         if( *(*(layover->cell + *(neighb + 2*i + 1)) + *(neighb + 2*i + 2)) == ind){
@@ -143,7 +152,7 @@ int* index_neighborhood(board* layover, int x, int y, int ind){
 }
 
 int* remove_neighborhood(int* A, int* B){
-    int* ret = (int*)malloc((*A) * sizeof(int));
+    int* ret = (int*)malloc(((*A)*2 + 1) * sizeof(int));
     int count = 0;
     int flag = 0;
     for(int i = 0; i < *A; i++){
@@ -182,7 +191,7 @@ int flag(board* layover, int x, int y){
 int uncover(board* layover, board *mines, int x, int y, int rec){
 	int i, j;
 	if(*(*(layover->cell + y) + x) != -1){ 
-		return 1;
+        return 1;
 	}
 	if(*(*(mines->cell + y) + x) == 1 && !rec){
 		for(i = 0; i < layover->height; i++){
