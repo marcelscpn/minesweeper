@@ -61,6 +61,7 @@ We've also used valgrind (https://www.valgrind.org/) for some memory checks/debu
 
 TODO
 ----
-- Write more strategies
 - Write more unit tests
+- Format code (tabs, ...) and review
+- Write more strategies
 - Write framework to evaluate strategies
