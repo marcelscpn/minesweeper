@@ -1,7 +1,8 @@
 minesweeper
 ===========
-This program implements a minesweeper board (customizable size) 
+This simple program implements a minesweeper board (customizable size, command line) 
 and lets you play manually or write strategies that are played by the computer. 
+Enjoy! 
 
 Usage
 -----
@@ -40,8 +41,8 @@ on it and then gives up.
 
 The other strategy (`s_simple_search`) performs a simple search: 
 If there is a cell with an equal number of uncovered cells and indicated neighboring mines, these are flagged.
-If a cell has all indicated neighboring mines flagged and empty fields nearby, these are uncovered. 
-Either this leads to victory or strategy gives up.
+If a cell has all indicated neighboring mines flagged and empty fields nearby, these empty fields are uncovered. 
+Either this leads to victory or strategy gives up. (In so far strategy hasn't been observed to blow up mines.)
 
 Potentially more strategies will be implemented. 
 
@@ -62,3 +63,4 @@ TODO
 ----
 - Write more strategies
 - Write more unit tests
+- Write framework to evaluate strategies
