@@ -38,16 +38,18 @@ command* s_simple_search(board* layover, int steps){
                 n_covered = index_neighborhood(layover, j, i, -1);
                 n_flags = count_neighboring_indices(layover, j, i, -2);
                 if(n_mines - n_flags == *n_covered && *n_covered > 0){
-                    int y = *(n_covered + 1);
                     int x = *(n_covered + 2);
+                    int y = *(n_covered + 1);
+                    free(n_covered);
                     return flag_command(x, y);
                 }
                 if(n_mines - n_flags == 0 && *n_covered > 0){
-                     int y = *(n_covered + 1);
-                     int x = *(n_covered + 2);
-                     return uncover_command(x, y);
-
+                    int x = *(n_covered + 2);
+                    int y = *(n_covered + 1);
+                    free(n_covered);
+                    return uncover_command(x, y);
                 }
+                free(n_covered);
             }
         }
     }
