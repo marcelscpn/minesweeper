@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 void print_command(command *inp){
-    printf("%c %d %d\n", inp->c, inp->x, inp->y);
+    printf("%c %d %d\n", inp->c, inp->y, inp->x);
 }
 
 int parse_command(board* layover, board* mines, command* cmd){
