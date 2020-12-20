@@ -24,7 +24,7 @@ Current modes are:
 |1       |s_first_click  |
 |2       |s_simple_search|
 
-0 is referred for manual play, all other numbers can be used for strategies. 
+0 is reserved for manual play, all other numbers can be used for strategies. 
 
 ### Commands
 In manual play there are 2 commands, uncover and flagging. The syntax is 
