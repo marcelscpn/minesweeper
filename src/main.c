@@ -4,8 +4,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(int argc, char* argv[]){
+    srand((unsigned)time(NULL));
 	if(argc != 5){
 		printf("Please specify board size and number of mines\n");
 		return 1;

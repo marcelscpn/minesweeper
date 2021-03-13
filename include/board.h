@@ -10,6 +10,7 @@ struct board{
 typedef struct board board;
 
 void print_layover(board* layover);
+void print_board(board* layover);
 board* create_layover(int h, int w, int init);
 board* create_new_board(int h, int w, int num);
 int free_board(board* b);

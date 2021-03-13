@@ -33,6 +33,28 @@ void print_layover(board* layover){
 	}
 }
 
+void print_board(board* layover){
+	int i, j;
+	printf("  ");
+	for(i = 0; i < layover->width; i++){
+		printf("%d ", i % 10);
+	}
+	printf("\n");
+	for(i = 0; i < layover->height; i++){
+		printf("%d ", i % 10);
+		for(j = 0; j < layover->width; j++){
+			switch(*(*(layover->cell + i) + j)){
+				case 0: printf("  ");
+					break;
+                case 1: printf("# ");
+					 break;
+			}
+		}
+		printf("\n");
+	}
+    
+}
+
 board* create_layover(int h, int w, int init){
         board* ret = (board*)malloc(sizeof(board));
         ret->height = h;
@@ -54,7 +76,6 @@ board* create_new_board(int h, int w, int num){
 		num = h * w;
 	}
 	int x, y;
-	srand((unsigned)time(NULL));
 	while(num){
 		x = rand() % ret->width; 
 		y = rand() % ret->height;

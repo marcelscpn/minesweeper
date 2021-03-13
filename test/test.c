@@ -1,8 +1,19 @@
+#include <stdlib.h>
+#include <time.h>
+
 #include "board.h"
 #include "command.h"
 #include "strategy.h"
 
 #include "minunit.h"
+
+MU_TEST(test_random_boards){
+    board* b1 = create_new_board(10, 10, 10);
+    board* b2 = create_new_board(10, 10, 10);
+    print_board(b1);
+    print_board(b2);
+    mu_assert_int_eq(0, 0);
+}
 
 MU_TEST(test_neighborhood_corner){
     board* layover = create_layover(3, 4, 0);
@@ -166,6 +177,7 @@ MU_TEST(test_uncover_mine){
 //}
 
 MU_TEST_SUITE(test_board_suite){
+    MU_RUN_TEST(test_random_boards);
     MU_RUN_TEST(test_neighborhood_corner);
     MU_RUN_TEST(test_neighborhood_corner2);
     MU_RUN_TEST(test_neighborhood_corner3);
@@ -208,6 +220,7 @@ MU_TEST_SUITE(test_board_suite){
 //}
 
 int main(void){
+    srand((unsigned)time(NULL));
     MU_RUN_SUITE(test_board_suite);
     MU_REPORT();
     return MU_EXIT_CODE;
