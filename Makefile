@@ -29,6 +29,12 @@ $(ODIR)/test/%.o: $(TESTDIR)/%.c
 test: $(OBJ) $(OBJT)
 	$(CC) -o $(EXECDIR)/unit_test $^ $(CFLAGS)
 
+$(ODIR)/stats_main.o: $(SRCDIR)/stats_main.c
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+stats: $(OBJ) $(ODIR)/stats_main.o 
+	$(CC) -o $(EXECDIR)/stats $^ $(CFLAGS)
+
 .PHONY: clean
 
 clean:
