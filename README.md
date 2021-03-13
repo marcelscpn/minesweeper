@@ -10,6 +10,10 @@ Compile the program via
 ```
 make all
 ```
+Compile the stats program via 
+```
+make stats
+```
 
 Launch via 
 ```
@@ -46,6 +50,12 @@ Either this leads to victory or strategy gives up. (In so far strategy hasn't be
 
 Potentially more strategies will be implemented. 
 
+### Stats
+We've added a program that runs a strategy a given number of times on random boards and prints out how the strategy performed. 
+```
+./exec/stats <mode> <height> <width> <mines> <number of games>
+```
+
 Structure
 ------------
 
@@ -64,4 +74,4 @@ TODO
 - Write more unit tests
 - Format code (tabs, ...) and review
 - Write more strategies
-- Write framework to evaluate strategies
+- Improve Stats program 
